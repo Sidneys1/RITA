@@ -52,7 +52,7 @@ public class exit implements ICommand
 	@Override
 	public String[] getCommandName()
 	{
-		return new String[] {"exit"};
+		return new String[] {"exit", "quit"};
 	}
 
 	@Override

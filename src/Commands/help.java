@@ -44,8 +44,6 @@ public class help implements ICommand
 				} else
 					TryPrint("No such command exists!");
 				// System.out.println("No such command exists!");
-
-				
 			}
 		}
 
@@ -79,7 +77,9 @@ public class help implements ICommand
 		
 		try
 		{
+			output.flush();
 			output.close();
+			bufOut.flush();
 			bufOut.close();
 		} catch (IOException e)
 		{
@@ -123,16 +123,16 @@ public class help implements ICommand
 		build.append("\tAlternately displays information about [command].\r\n");
 		build.append("\tHelp format:\r\n");
 		build.append("\t\t[bracketed] items are optional, (parenthetical) items are required.\r\n");
-		build.append("\t\tItems with a \"-\" identifyer are flags, and may have additional arguments of their own.\r\n");
+		build.append("\t\tItems with a \"-\" identifier are flags, and may have additional arguments of their own.\r\n");
 		build.append("\t\tItems without a dash are plain-text arguments.\r\n");
-		build.append("\t\t\"(-a or -b)\" indicates that either flag a or flag b are required, while \"(-a and/or -b)\" indicats that a and b, or a or b is valid.\r\n");
+		build.append("\t\t\"(-a or -b)\" indicates that either flag a or flag b are required, while \"(-a and/or -b)\" indicates that a and b, or a or b is valid.\r\n");
 		return build.toString();
 	}
 
 	@Override
 	public String[] getCommandName()
 	{
-		return new String[] { "help" };
+		return new String[] { "help", "man" };
 	}
 
 	@Override

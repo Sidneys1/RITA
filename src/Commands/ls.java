@@ -46,23 +46,26 @@ public class ls implements ICommand
 				case "-default":
 					search = p.getArgument();
 					break;
+				case "--verbose":
 				case "-v":
 					verbose = true;
 					break;
+				case "--recursive":
 				case "-r":
 					if (p.getArgument() != null)
 						recursion += Integer.parseInt(p.getArgument());
 					else
 						recursion = -1;
 					break;
-					
+				case "--files":
 				case "-f":
 					dirs = false;
 					break;
+				case "--directories":
 				case "-d":
 					files = false;
 					break;
-					
+				case "--caseinsensitive":
 				case "-c":
 					caseSensitive = false;
 					break;
@@ -219,10 +222,10 @@ public class ls implements ICommand
 		builder.append("Usage:\r\n");
 		builder.append("\tls [search [-c]]  [-v] [-r [#x]] [-f or -d]\r\n\r\n");
 		builder.append("\tLists the items in the current path, optionally name-matching [search].\r\n");
-		builder.append("\t[search [-c]]: Search for the specified text, and optionally search [-c]ase insensitively.\r\n");
-		builder.append("\t[-v]: Verbose output (full path names).\r\n");
-		builder.append("\t[-r]: Recursive list [#x] folders deep. Not specifying [#x] lists infinite levels.\r\n");
-		builder.append("\t[-f or -d]: List only [-f]iles or [-d]irectories.\r\n");
+		builder.append("\t[search [-c][--caseinsensitive]]: Search for the specified text, and optionally search [-c]ase insensitively.\r\n");
+		builder.append("\t[-v][--verbose]: Verbose output (full path names).\r\n");
+		builder.append("\t[-r][--recursive]: Recursive list [#x] folders deep. Not specifying [#x] lists infinite levels.\r\n");
+		builder.append("\t[-f or -d][--files or --directories]: List only [-f]iles or [-d]irectories.\r\n");
 		return builder.toString();
 	}
 
