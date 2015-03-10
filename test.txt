@@ -1,0 +1,5 @@
+This is a text file.
+And this is a new line.
+
+That was a blank line.
+No, this is patrick.
