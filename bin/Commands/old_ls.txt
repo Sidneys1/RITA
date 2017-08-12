@@ -1,0 +1,180 @@
+package commandlet.commands;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.List;
+
+import commandlet.Host;
+import commandlet.ICommand;
+import commandlet.Parameter;
+
+public class ls implements ICommand
+{
+	Host host = null;
+	@Override
+	public void Initialize(Host host)
+	{
+		this.host = host;
+	}
+
+	@Override
+	public void Execute(List<Parameter> params)
+	{
+		String search = null;
+		boolean verbose = false;
+		int recursion = 0;
+		BasicFilenameFilter filter = null;
+		boolean files = true;
+		boolean dirs = true;
+		
+		for(Parameter p: params)
+		{
+			switch (p.getIdentifier())
+			{
+				case "-default":
+					search = p.getArgument();
+					filter = new BasicFilenameFilter(search);
+					break;
+				case "-v":
+					verbose = true;
+					break;
+				case "-r":
+					if (p.getArgument() != null)
+						recursion = Integer.parseInt(p.getArgument());
+					else
+						recursion = -1;
+					if (filter != null)
+						filter.setRecursive(true);
+					break;
+					
+				case "-f":
+					dirs = false;
+					break;
+				case "-d":
+					files = false;
+					break;
+					
+				case "-c":
+					filter.setCaseSensitive(false);
+					break;
+			}
+		}
+		File root = new File(host.getPath());
+		try
+		{
+			System.out.println("Items in \"" + (verbose ? root.getCanonicalPath() : root.getName()) + "\":");
+			List(root, 0, recursion, verbose, filter, files, dirs);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			System.out.println("An unspecified error ocurred!");
+		}
+	}
+
+	/**
+	 * Recursive ls
+	 * @param dir1 The directory to search
+	 * @param level The current depth of the search (root is 0)
+	 * @param levelLim The max depth of the search (-1 = no limit, 0 = root only, etc)
+	 * @param longOut Verbose output
+	 * @param search Filter
+	 * @param fil Show files
+	 * @param dirs Show folders
+	 * @throws IOException Permission errors, etc
+	 */
+	private static void List(File dir1, int level, int levelLim, boolean longOut, BasicFilenameFilter search, boolean fil, boolean dirs) throws IOException
+	{
+		File[] files = search != null ? dir1.listFiles(search) : dir1.listFiles();
+		
+		String levelStr = "";
+		for (int l = 0; l < level; l++)
+				levelStr += "|";
+		levelStr += "|";
+		for (int i = 0; i < files.length; i++)
+		{
+			try
+			{
+				if ((files[i].isDirectory() && dirs) ||  (files[i].isFile() && fil))
+				{
+					String tempStr = "- ";
+					if ((levelLim == -1 || level - levelLim < 0) && files[i].isDirectory() && files[i].list().length > 0)
+						tempStr = "+ ";
+					System.out.println("\t" + levelStr + tempStr +
+							(longOut ? files[i].getAbsoluteFile() : files[i].getName()) +
+							(files[i].isDirectory() ? " (d)" : ""));
+				}
+				if ((level < levelLim || levelLim == -1) && (files[i].isDirectory() && files[i].list().length > 0))
+					List(files[i], level + 1, levelLim, longOut, search, fil, dirs);
+			} catch (Exception ex)
+			{
+				System.out.println("An unknown error ocurred! Perhaps a permission error?");
+			}
+		}
+	}
+	
+	@Override
+	public void PrintHelp()
+	{
+		System.out.println("Usage:");
+		System.out.println("\tls [search [-c]]  [-v] [-r [x]] [-f or -d]");
+		System.out.println();
+		System.out.println("\tLists the items in the current path, optionally name-matching [search].");
+		System.out.println("\t[search [-c]]: Search for the specified text, and optionally search [-c]ase insensitively.");
+		System.out.println("\t[-v]: Verbose output (full path names).");
+		System.out.println("\t[-r]: Recursive list [x] folders deep. Not specifying [x] lists infinite levels.");
+		System.out.println("\t[-f or -d]: List only [-f]iles or [-d]irectories.");
+	}
+
+	@Override
+	public String getCommandName()
+	{
+		return "ls";
+	}
+
+	public class BasicFilenameFilter implements FilenameFilter
+	{
+		String filter = null;
+		boolean recursive = false;
+		public void setCaseSensitive(boolean caseSensitive)
+		{
+			CaseSensitive = caseSensitive;
+		}
+
+		boolean CaseSensitive = true;
+		
+		public BasicFilenameFilter(String filter)
+		{
+			this.filter = filter;
+		}
+		
+	    public void setRecursive(boolean recursive)
+		{
+			this.recursive = recursive;
+		}
+
+		public boolean accept(File dir, String name)
+	    {
+	    	try
+			{
+				if (recursive && new File(dir.getCanonicalPath() + "\\" + name).isDirectory())
+					return true;
+			} catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	
+	        if (name != null && filter != null && (CaseSensitive ?
+	            name.toLowerCase().contains(filter.toLowerCase()) : name.contains(filter)))
+	        {
+	            return true;
+	        }
+	        else
+	        {
+	            return false;
+	        }
+	    }
+	}
+
+}
