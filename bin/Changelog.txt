@@ -1,0 +1,181 @@
+RITA Change Log
+
+Format: 
+~ Change Group (Usually the class or file that the change fell under)
+	+ New Feature
+	- Removed Feature (Reason)
+	* Changed Feature or Bug Fix
+	! Major Known Bug
+	? Major ToDo
+	
+Version 0.1.5.1
+
+~ cat
+	+ Added CAT command
+	
+~ RITA, various commands
+	* Changed synchronization of thread communication
+	
+	Idea: an "execute" command that takes TEXT_M input. e.g. cat script.bat | exec "-v"
+
+Version 0.1.5.0 (For Assignment 5. For actual work done since Assignment 4, see Version 0.1.4.0)
+
+~ ls
+	* Desperately attempting to fix bug from version 0.1.4.0
+		Attempted removing BufferedWriter - no change.
+		Attempted moving flush() into synchronized block - no change.
+	! Bug from version 0.1.4.0 still present
+	
+Version 0.1.4.0 (For Lab 5)
+
+~ ls
+	+ Implemented ICommand
+	! Hangs randomly for unknown reasons, locking up RITA who is patiently waiting for output
+	
+~ RITA
+	* Linked threads together for proper workflow
+	* Coordinated input/output format
+	
+~ SearchResult
+	* Attempted to fix bug in ls
+	
+~ Added getCurrentFormat to return the current output format, added to appropriate subclasses
+
+~ Host
+	Added isDebug to notify threads whether or not to print to System.err
+	
+Version 0.1.3.0 (For Assignment 4)
+
+~ Readme.txt
+	+ Added to explain how to properly debug or compile and launch RITA.
+
+~ ICommand
+	+ Now implements runnable
+	+ Added Initialize method to set local Host and Argument variables while still maintaining a parameterless constructor 
+	* Renamed Execute method to run and removed parameters
+	+ Added startInput, getInput, and getOutput to retrieve and initialize input/output streams
+	* Changed getHelp to return type String
+	
+~ ls
+	+ Partially implemented new ICommand interface, added Host and Parameters as class variables
+	! Does not currently compile, do NOT export to Commands.jar until fixed.
+	
+~ help, cd & exit 
+	+ Fully implemented new ICommand interface, detects output style (as USER) and inputs at least NULL
+	
+~ RITA
+	* Runs ICommands on individual threads, waits for it to finish without locking up.
+	* Outputs all thread output from ICommands using synchronized blocks instead of continual loops
+	* Standard output identifies to commands as "USER" output.
+	
+~ StreamItem
+	- Removed StreamItem in favor of new Piping methodology
+
+Version 0.1.2.0 (For Lab 4)
+
+~ WorflowItem
+	+ Added WorkflowItem class to represent a single command within a workflow
+
+~ Workflow
+	* Changed to implement WorkflowItem instead of Input
+	+ Added separate class for Input
+
+~ RITA
+	* Changed getInput to load the ICommands itself instead of deferring to main()
+	+ Added Host argument to getInput so it can check if commands exist
+	+ Added launch output indicating number of commands and directing users to 'help'
+	+ Added notice if Commands.jar is missing or devoid of commands
+	
+~ ICommand
+	? Semi-implemented changes to allow for input/output (Currently commented out) 
+
+~ inputStreamItem
+	+ Added inputStreamItem to describe input data from one command to its output
+	? Currently unimplemented
+
+~ DataFormats
+	+ Enum to describe different data formats
+	? Currently unimplemented
+	
+~ ls
+	+ Added alias "list" to test alias processing
+	
+~ Help
+	* Help now indicates command aliases
+
+Version 0.1.1.0
+
+? Add workflowitems
+
+~ ICommand
+	- Removed Init method
+	+ Added Host argument to Execute method
+	* Changed GetName return type to String[] to reflect aliases
+
+~ Host
+	+ Moved CommandHistory to Host from cd
+	* Changed command checks to implement aliases
+	
+~ cd
+	- Moved CommandHistory from cd to Host
+	
+~ CommandListing
+	+ Added CommandListing to define commands
+	
+~ help
+	* Updated help to implement the new CommandListing structure
+	? List aliases
+	
+~ Workflow
+	+ Added workflow class to describe a string of ICommands piping into each other
+	* Temporarily describes a list of inputs
+	? Change to ICommands
+	
+~ RITA
+	* Updated RITA to import CommandListings automatically and launch them by name
+	* Changed getInput to processSingleInput, changed arguments to String, no longer directly gets input
+	+ Added new getInput capable of splitting a command into a pipe-divided workflow
+	? Change getInput to process WorkFlowItems
+
+Version 0.1.0.1
+~ Project
+	* Exported to separate Java Project
+	* Fixed references
+
+Version 0.1.0.0
+
+~ RITA Class
+	+ Code entry point
+	+ Generates Input class from terminal input
+~ Host Class
+	+ The state object for the RITA terminal
+~ ICommand Interface
+	+ Describes a terminal command
+~ Input Class
+	+ Describes user input including command, default arguments, and parameters and associated arguments
+~ Parameter Class
+	+ Describes a parameter/argument pair
+~ Test Class
+	- Initial test of the RITA structure (Deprecated)
+	
+~ commands/cd ICommand
+	+ Changes path variable of Host class to the system root directory
+	+ Alternately changes path variable to the specified relative directory
+	! Does not currently accept absolute paths
+~ commands/exit ICommand
+	+ Exits RITA console by changing running variable of Host class
+~ commands/help ICommand
+	+ List all commands registered in Host class
+	+ Alternately executes the PrintHelp method of any ICommand registered with Host class that matches the name specified in the default argument.
+~ commands/ls ICommand
+	+ Lists files and folders contained within the directory specified by the path variable of the host class
+	+ Alternately lists files matching a regex search specified by the -default parameter's argument
+	+ Added -r parameter for recursion, including an argument specifying depth
+	+ Added -v parameter for verbose output
+	+ Added -c parameter for case insensitive regex searching
+	+ Added -f and -d mutually exclusive parameters to specify file-only or directory-only output
+~ commands/old_ls Text File
+
+~ helpers/BasicFilenameFilter Class
+~ helpers/SearchResult Class
+
